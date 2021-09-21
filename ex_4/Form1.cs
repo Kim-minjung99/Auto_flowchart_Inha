@@ -57,6 +57,14 @@ namespace ex
         int CenterX = 0;
         int CenterX2 = 0;//true false 갈래기준점
 
+        int End_y1 = 0;//각기 순서도에서 그려진 도형의 y좌표를 비교하고 가장 밑에있는 도형의 y좌표를 구해서 그 y좌표 밑으로 화살표를 그린다.
+        int End_y2 = 0;
+        int End_y3 = 0;
+        int End_y4 = 0;
+        int End_y5 = 0;
+
+        int end_Y = 0;//밑에 코드중에 End_y1...을 비교하여 맨 밑에있는 도형의 y값의 +5한 최종값을 end_Y라고 하였다.
+
         Point pt2 = new Point();
 
         public Form1()
@@ -77,7 +85,7 @@ namespace ex
             G.Dispose();
         }
 
-        public void IFCurveArrow_Flat()//if 문의 true false를 위한 꺾인 화살표
+        public void IFCurveArrow_Flat(int x2, int y2, int x1, int y1)//if 문의 true false를 위한 꺾인 화살표
         {
             Graphics G2 = panel1.CreateGraphics();
             Pen pen = new Pen(Color.FromArgb(255, 0, 0, 0), 3);
@@ -85,20 +93,13 @@ namespace ex
             pen.StartCap = LineCap.Flat;//직선의 선을 그리는 용도
             //pen.StartCap = LineCap.ArrowAnchor;//화살표촉
 
-            int x2_1 = pt2.X + d_resize.Width;
-            int y2_1 = pt2.Y + d_resize.Height / 2;
 
-            int y2_2 = pt2.Y + d_resize.Height / 2;
-            int x2_2 = CenterX2;
-
-
-
-            G2.DrawLine(pen, x2_2, y2_2, x2_1, y2_1);//둘이 동시에 그려지지 않는다.
-            G2.DrawString("False", Font, Brushes.Black, x2_1, y2_1 - 15);
+            G2.DrawLine(pen, x2, y2, x1, y1);//둘이 동시에 그려지지 않는다.
+            G2.DrawString("True", Font, Brushes.Black, x2 + 5, y2 + 5);
 
             G2.Dispose();
         }
-        public void IFCurveArrow_Ancher()//if 문의 true false를 위한 꺾인 화살표
+        public void IFCurveArrow_Ancher(int x2, int y2, int x1, int y1)//if 문의 true false를 위한 꺾인 화살표
         {
             Graphics G2 = panel1.CreateGraphics();
             Pen pen = new Pen(Color.FromArgb(255, 0, 0, 0), 3);
@@ -106,14 +107,7 @@ namespace ex
             
             pen.StartCap = LineCap.ArrowAnchor;//화살표촉
 
-            int x2_1 = CenterX2;
-            int y2_1 = pt2.Y + d_resize.Height / 2;
-
-            int y2_2 = pt2.Y + d_resize.Height + 3;
-            int x2_2 = CenterX2;
-
-            
-            G2.DrawLine(pen, x2_2, y2_2, x2_1, y2_1);//둘이 동시에 그려지지 않는다.
+            G2.DrawLine(pen, x2, y2, x1, y1);//둘이 동시에 그려지지 않는다.
             
 
             G2.Dispose();
@@ -245,8 +239,7 @@ namespace ex
             int x2 = 0;
             int y2 = 0;
 
-
-           
+            
 
 
 
@@ -294,10 +287,13 @@ namespace ex
 
 
                             x2 = pt.X + resize_decision.Width / 2;//이미 변화한 좌표값
-                            y2 = pt.Y;//화살표 그리기위한 좌표
+                            y2 = pt.Y;//if문 true문에서 다시 centerX로 돌아가기 위한 화살표를 그리기 위한 기준점
+
 
                             pt2 = new Point(CenterX - (resize_decision.Width / 2), pt.Y);//두번째 도형을 그리는 가운데정렬 포인트, 그림그리기 위해선 포인트
-                                                                                               //값이 필요하므로 임시로 그림을 위한 좌표값이다.
+                                                                                         //값이 필요하므로 임시로 그림을 위한 좌표값이다.
+
+                            End_y1 = pt2.Y;
 
                             g.DrawImage(resize_decision, pt2);
                             g.DrawString(allLines[i + 1], Font, Brushes.Black, CenterX - (resize_decision.Width / 8), pt.Y);
@@ -314,7 +310,7 @@ namespace ex
                             Point_Array[0] = CenterX;
                             Point_Array[1] = pt.Y + resize_decision.Height;//두번째 도형에서의 시작
 
-
+                            g.DrawString("False", Font, Brushes.Black, CenterX+5, pt.Y + resize_decision.Height+15);//False가 밑으로 빠지는 모양새이다.
 
                             //----------------------------------------centerx2----------------------------------------------------------
 
@@ -349,11 +345,42 @@ namespace ex
                             Point_Array[0] = CenterX2;
                             Point_Array[1] = pt.Y + resize_decision2.Height;//두번째 도형에서의 시작
                             */
-                            IFCurveArrow_Flat();
-                            IFCurveArrow_Ancher();
+                            
+                            //flat함수를 부르기 위한 x좌표 y좌표
+                            int x2_1 = pt2.X + d_resize.Width;
+                            int y2_1 = pt2.Y + d_resize.Height / 2;
+
+                            int y2_2 = pt2.Y + d_resize.Height / 2;
+                            int x2_2 = CenterX2;
 
 
+                            //Arrow_ancher함수를 위한 x좌표 y좌표
+                            int Ax2_1 = CenterX2;
+                            int Ay2_1 = pt2.Y + d_resize.Height / 2;
 
+                            int Ay2_2 = pt2.Y + d_resize.Height + 3;
+                            int Ax2_2 = CenterX2;
+
+
+                            IFCurveArrow_Flat(x2_2, y2_2, x2_1, y2_1);
+                            IFCurveArrow_Ancher(Ax2_2, Ay2_2, Ax2_1, Ay2_1);//각각 함수를 부른다.
+
+
+                            //본래자리로 돌아가는 화살표
+                            int BackF_x1 = CenterX2;
+                            int BackF_y1 = pt2_2.Y + process2_resize.Height;
+                            int BackF_x2 = CenterX2;
+                            int BackF_y2 = end_Y;
+
+                            int BackA_x1 = CenterX2;
+                            int BackA_y1 = end_Y;
+                            int BackA_x2 = CenterX;
+                            int BackA_y2 = end_Y;
+
+                            Console.WriteLine("도형을 그리는 시점의 end_Y : {0}", end_Y);
+
+                            IFCurveArrow_Flat(BackF_x2, BackF_y2,BackF_x1, BackF_y1);
+                            IFCurveArrow_Ancher(BackA_x2, BackA_y2,BackA_x1, BackA_y1);
                         }
 
                     }
@@ -372,6 +399,7 @@ namespace ex
                             //document 그림을그리기위한 pt값을 줘서 
                             Point pt3 = new Point(CenterX - (resize_document.Width / 2), pt.Y);
 
+                            End_y2 = pt3.Y;
 
                             g.DrawImage(resize_document, pt3);//pt값을 적용
                                                               //g.DrawString(allLines[i + 1], Font, Brushes.Black, 70, i * 70);
@@ -404,6 +432,8 @@ namespace ex
                             //card 그림을그리기위한 pt값을 줘서 
                             Point pt4 = new Point(CenterX - (resize_card.Width / 2), pt.Y);
 
+                            End_y3 = pt4.Y;
+
                             g.DrawImage(resize_card, pt4);//pt값을 적용
                                                           //g.DrawString(allLines[i + 1], Font, Brushes.Black, 70, i * 70);
                             g.DrawString(allLines[i + 1], Font, Brushes.Black, CenterX - (resize_card.Width / 8), pt.Y);
@@ -434,6 +464,8 @@ namespace ex
 
                             //card 그림을그리기위한 pt값을 줘서 
                             Point pt5 = new Point(CenterX - (resize_scanf.Width / 2), pt.Y);
+
+                            End_y4 = pt5.Y;
 
                             g.DrawImage(resize_scanf, pt5);//pt값을 적용
                                                            //g.DrawString(allLines[i + 1], Font, Brushes.Black, 70, i * 70);
@@ -483,6 +515,36 @@ namespace ex
                    {
                         if (filepath6.Contains("end")) 
                         {
+                            //if true를 위해 오른쪽으로 나간 도형에서 화살표로 centerX로 돌아오기 위한 각 도형의 x좌표 크기비교
+                            
+                            if (End_y1 > End_y2 && End_y1 > End_y3 && End_y1 > End_y4 && End_y1 > End_y5)//End_x1이 제일 큰경우
+                            {
+                                end_Y = End_y1;
+                            }
+                            else if (End_y2 > End_y1 && End_y2 > End_y3 && End_y2 > End_y4 && End_y2 > End_y5)//End_x2이 제일 큰경우
+                            {
+                                end_Y = End_y2;
+                            }
+                            else if (End_y3 > End_y1 && End_y3 > End_y2 && End_y3 > End_y4 && End_y3 > End_y5)//End_x3이 제일 큰경우
+                            {
+                                end_Y = End_y3;
+                            }
+                            else if (End_y4 > End_y1 && End_y4 > End_y2 && End_y4 > End_y3 && End_y4 > End_y5)//End_x4이 제일 큰경우
+                            {
+                                end_Y = End_y4;
+                            }
+                            else if (End_y5 > End_y1 && End_y5 > End_y2 && End_y5 > End_y3 && End_y5 > End_y4)//End_x5이 제일 큰경우
+                            {
+                                end_Y = End_y5;
+                            }
+
+                            end_Y = end_Y + 50;
+                            Console.WriteLine("비교분석한 end_Y값 : {0}", end_Y);
+
+
+
+                            //Console.WriteLine("가장 밑에있는 도형의 x좌표는 {0} 이다.", end_Y);
+
                             Point pt_F = new Point(100,400);//끝 도형을 그리기위한 포인트
 
                             
@@ -494,7 +556,6 @@ namespace ex
                    }
 
                 }//arrowistrue가 true
-
 
 
             }//for문
@@ -540,3 +601,5 @@ namespace ex
 
     }
 }
+//글자수가 옆으로 centerx2설정시 화면을 넘어가면 화살표가 이상하게 표시됨
+//비트맵 다시 설정해서 축소하고 표시해주는 방식으로..?
